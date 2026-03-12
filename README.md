@@ -1,21 +1,43 @@
-# TIH (Talk, Interactive, Humanize)
-> AI Streamer Platform — Persona chatbot & podcast generation | Built at Vdigm
+<h1 align="center">
+  TIH (Talk, Interactive, Humanize)
+  <br/>
+  <sub>AI Streamer Platform — Persona chatbot & podcast generation</sub>
+</h1>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=flat-square&logo=langchain&logoColor=white"/>
+  <img src="https://img.shields.io/badge/LangGraph-1C3C3C?style=flat-square&logo=langchain&logoColor=white"/>
+  <img src="https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Google%20Gemini-8E75B2?style=flat-square&logo=googlegemini&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Anthropic-191919?style=flat-square&logo=anthropic&logoColor=white"/>
+  <br/>
+  <img src="https://img.shields.io/badge/GCP%20Cloud%20Run-4285F4?style=flat-square&logo=googlecloud&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Cloud%20Build-4285F4?style=flat-square&logo=googlecloud&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Unreal%20Engine%205-0E1128?style=flat-square&logo=unrealengine&logoColor=white"/>
+  <img src="https://img.shields.io/badge/ElevenLabs-000000?style=flat-square&logoColor=white"/>
+</p>
+
+<p align="center">
+  <a href="https://okjunseong.com/portfolio/6">📋 Portfolio</a> &nbsp;|&nbsp;
+  <a href="https://okjunseong.com/tech/3">📝 Tech Post</a> &nbsp;|&nbsp;
+  <a href="https://youtu.be/XvWagOY7w-8">🎬 Demo Video</a>
+</p>
 
 > ⚠️ **Notice:** 본 프로젝트는 (주)브이다임 재직 중 개발한 사내 프로젝트로, **소스코드 반출이 불가**합니다. 이 저장소에는 프로젝트의 구조, 설계 의도, 기술적 의사결정 과정을 정리한 **README 문서만 포함**되어 있습니다.
 
 ## 🎬 Demo
 
-<!-- GIF 파일을 assets/ 폴더에 넣고 경로를 업데이트하세요 -->
-
 | AI NPC 실시간 채팅 | AI NPC 영상통화 |
 |:---:|:---:|
-| [GIF: AI NPC와 텍스트 채팅 — TTS 음성 합성 + MetaHuman 립싱크로 실시간 응답] | [GIF: AI NPC와 영상통화 — 음성 인식(STT) → AI 응답 → 음성 합성(TTS) 풀 파이프라인] |
-| `![AI Chat Demo](assets/demo-chat.gif)` | `![Video Call Demo](assets/demo-videocall.gif)` |
+| ![AI Chat Demo](assets/채팅%20대화.gif) | ![Video Call Demo](assets/영상통화.gif) |
 
 | AI 팟캐스트 생성 |
 |:---:|
-| [GIF: 2인 AI 캐릭터가 주제에 대해 자율 토론하는 팟캐스트 진행 화면] |
-| `![Podcast Demo](assets/demo-podcast.gif)` |
+| ![Podcast Demo](assets/팟캐스트진행.gif) |
 
 <br/>
 
@@ -44,7 +66,7 @@
 
 ### 전체 구조
 
-[시스템 전체 아키텍처 다이어그램]
+![시스템 전체 아키텍처](assets/flow/아키텍쳐.png)
 
 모든 클라이언트 요청은 **GCP Cloud Armor**를 통해 WAF/DDoS 방어를 거친 후 각 마이크로서비스로 라우팅됩니다. JWT 인증은 각 FastAPI 서비스의 미들웨어에서 처리하며, 시크릿 키는 **GCP Secret Manager**로 중앙 관리합니다.
 
@@ -103,58 +125,17 @@ flowchart TD
 
 ### KEY FEATURE 1: 체감 응답 속도 50% 단축 — SSE 스트리밍 파이프라인
 
-[SSE 스트리밍 파이프라인 다이어그램]
+![SSE 스트리밍 파이프라인](assets/flow/응답속도%20개선.png)
 
 **문제:** LLM 기반 챗봇의 초기 응답 시간이 평균 8초에 달해 대화의 흐름이 끊기고, 사용자 경험을 크게 저해했습니다.
 
-**해결:** SSE(Server-Sent Events) 기반 스트리밍 파이프라인을 구축했습니다.
-
-```mermaid
-sequenceDiagram
-    participant Client as Unreal Client
-    participant API as FastAPI Server
-    participant LLM as LLM (Streaming)
-    participant TTS as TTS Server
-
-    Client->>API: 사용자 질문
-    API->>LLM: 스트리밍 호출
-    LLM-->>API: 토큰 스트리밍...
-    Note over API: 정규표현식으로<br/>문장 완성 감지
-    API-->>Client: SSE: 첫 번째 문장 전송
-    Client->>TTS: 첫 번째 문장 TTS 요청
-    Note over Client: 음성 재생 + 애니메이션 시작
-    LLM-->>API: 토큰 스트리밍 계속...
-    API-->>Client: SSE: 두 번째 문장 전송
-    Note over API,Client: 생성과 재생이 병렬로 진행
-```
-
-LLM이 답변의 첫 문장을 완성하는 즉시 클라이언트로 전송하여 TTS 및 애니메이션을 시작하고, 그 시간 동안 나머지 문장을 병렬로 처리합니다. 이를 통해 사용자가 체감하는 초기 응답 시간을 **평균 4초로 50% 단축**했습니다.
+**해결:** SSE(Server-Sent Events) 기반 스트리밍 파이프라인을 구축했습니다. LLM이 답변의 첫 문장을 완성하는 즉시 클라이언트로 전송하여 TTS 및 애니메이션을 시작하고, 그 시간 동안 나머지 문장을 병렬로 처리합니다. 이를 통해 사용자가 체감하는 초기 응답 시간을 **평균 4초로 50% 단축**했습니다.
 
 ### KEY FEATURE 2: 에이전틱 워크플로우 — 상황별 최적의 답변 생성
 
-[에이전틱 워크플로우 다이어그램]
+![에이전틱 워크플로우](assets/flow/ai%20에이전트%20구축.png)
 
 사용자의 질문은 일상 대화부터 방송 내용에 대한 깊이 있는 질문까지 다양합니다. Supervisor 에이전트가 질문의 의도를 파악하여 최적의 도구를 자율적으로 선택하고 활용하는 에이전틱 워크플로우를 설계했습니다.
-
-```mermaid
-flowchart TD
-    U[사용자 질문] --> S[Supervisor Agent]
-    S --> |의도 분석| D{도구 선택}
-
-    D --> T1[방송 대본 RAG]
-    D --> T2[커뮤니티 게시글 분석]
-    D --> T3[웹 검색]
-    D --> T4[유저 활동 데이터]
-    D --> T5[AI NPC 리포트]
-
-    T1 --> R[정보 종합]
-    T2 --> R
-    T3 --> R
-    T4 --> R
-    T5 --> R
-
-    R --> A[입체적 답변 생성]
-```
 
 **활용 도구:**
 
@@ -167,26 +148,11 @@ flowchart TD
 
 ### TROUBLESHOOTING: 이벤트 루프 블로킹 해결
 
-[TTS 이중 캐싱 구조 다이어그램]
+![TTS 이중 캐싱 구조](assets/flow/음성캐싱구조.png)
 
 **문제:** FastAPI 비동기 환경에서 다수의 TTS 요청이 동시에 들어올 경우, CPU 집약적인 TTS 작업이 이벤트 루프를 점유(Blocking)하여 전체 시스템 응답이 느려지는 병목 발생.
 
 **해결:**
-
-```mermaid
-flowchart TD
-    A[TTS 요청] --> B{음성 파일 캐시 확인}
-    B -->|Cache Hit| C[즉시 응답]
-    B -->|Cache Miss| D[Base TTS 생성]
-    D --> E{톤 정보 SE 캐시 확인}
-    E -->|Cache Hit| F[캐싱된 톤 정보 사용]
-    E -->|Cache Miss| G[목표 음성에서 톤 추출]
-    G --> H[톤 정보 캐싱]
-    H --> F
-    F --> I[실시간 음성 복제]
-    I --> J[음성 파일 캐싱]
-    J --> C
-```
 
 1. CPU 집약적 TTS 작업을 별도 **Thread Pool**에 위임하여 이벤트 루프 블로킹 방지
 2. 완성된 음성 파일 + 목소리 톤 정보(SE)를 **이중 캐싱**하여 중복 연산 제거
@@ -272,7 +238,7 @@ flowchart TD
 | **LLM API** | OpenAI GPT, Google Gemini, Anthropic Claude |
 | **TTS SaaS** | ElevenLabs |
 | **Infra** | GCP Cloud Run, Cloud Build, Cloud Armor, Secret Manager |
-| **Database** | MongoDB Atlas, PostgreSQL |
+| **Database** | MongoDB Atlas |
 | **Client** | Unreal Engine 5 (Whisper STT, MetaHuman Lip Sync 등 플러그인 활용) |
 | **DevOps** | Docker, GitHub Actions, Cloud Build, Monorepo |
 
