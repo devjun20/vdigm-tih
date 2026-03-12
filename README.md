@@ -49,8 +49,29 @@
 
 [![Video Label](http://img.youtube.com/vi/XvWagOY7w-8/0.jpg)](https://youtu.be/XvWagOY7w-8)
 
-> **팀 구성:** 백엔드 1인(본인) · 언리얼 클라이언트 1인 · 3D 모델러 1인 — 총 3인
->
+### 개발 팀
+
+<table>
+  <tr>
+    <td align="center" width="200">
+      <img src="https://firebasestorage.googleapis.com/v0/b/okjunseong.appspot.com/o/uploadedImage%2FnewsMain%2Fprofile.jpeg?alt=media&token=2f5cbe97-ff56-4876-b218-0a0893c584d0" width="100" style="border-radius:50%"/><br/>
+      <b>손준성</b><br/>
+      <sub>Backend / AI / Infra</sub><br/>
+      <sub>시스템 설계, 전체 백엔드 개발,<br/>AI 에이전트, CI/CD, 비용 시뮬레이터</sub>
+    </td>
+    <td align="center" width="200">
+      <b>신혁진</b><br/>
+      <sub>Unreal Engine Client</sub><br/>
+      <sub>UE5 클라이언트 개발,<br/>MetaHuman, Lip Sync 연동</sub>
+    </td>
+    <td align="center" width="200">
+      <b>3D 모델링 팀</b><br/>
+      <sub>3D Modeling</sub><br/>
+      <sub>MetaHuman 캐릭터 모델링,<br/>애니메이션 에셋 제작</sub>
+    </td>
+  </tr>
+</table>
+
 > **담당 범위:** 시스템 아키텍처 설계, 전체 백엔드 개발 (인증, LangGraph/LangChain 기반 AI 에이전트, RAG 파이프라인, TTS 서비스, PDF 서비스 등), CI/CD 파이프라인 구축, 비용 시뮬레이터 개발, 클라이언트 연동
 
 ### 핵심 성과
