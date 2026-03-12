@@ -49,7 +49,9 @@
 
 [![Video Label](http://img.youtube.com/vi/XvWagOY7w-8/0.jpg)](https://youtu.be/XvWagOY7w-8)
 
-> **담당 범위:** 시스템 아키텍처 설계, 로그인을 제외한 전체 백엔드 개발 (LangGraph/LangChain 기반 AI 에이전트, RAG 파이프라인, TTS 서비스, PDF 서비스 등), CI/CD 파이프라인 구축, 클라이언트 연동
+> **팀 구성:** 백엔드 1인(본인) · 언리얼 클라이언트 1인 · 3D 모델러 1인 — 총 3인
+>
+> **담당 범위:** 시스템 아키텍처 설계, 전체 백엔드 개발 (인증, LangGraph/LangChain 기반 AI 에이전트, RAG 파이프라인, TTS 서비스, PDF 서비스 등), CI/CD 파이프라인 구축, 비용 시뮬레이터 개발, 클라이언트 연동
 
 ### 핵심 성과
 
